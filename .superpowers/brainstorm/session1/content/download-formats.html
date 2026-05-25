@@ -1,0 +1,33 @@
+<h2>What output formats should users be able to download?</h2>
+<p class="subtitle">Select all that apply — copy-to-clipboard is always included.</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="txt" onclick="toggleSelect(this)">
+    <div class="letter">📄</div>
+    <div class="content">
+      <h3>Plain Text (.txt)</h3>
+      <p>Simple, universal, smallest file size. Works in every app. <strong>Always included.</strong></p>
+    </div>
+  </div>
+  <div class="option" data-choice="docx" onclick="toggleSelect(this)">
+    <div class="letter">📝</div>
+    <div class="content">
+      <h3>Word Document (.docx)</h3>
+      <p>Familiar for office workers. Preserves formatting. Useful for formal documents, reports, letters in Indian languages.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="pdf" onclick="toggleSelect(this)">
+    <div class="letter">📕</div>
+    <div class="content">
+      <h3>PDF (.pdf)</h3>
+      <p>Print-ready, non-editable. Good for sharing final transcripts. Requires a PDF library (jsPDF).</p>
+    </div>
+  </div>
+  <div class="option" data-choice="srt" onclick="toggleSelect(this)">
+    <div class="letter">🎬</div>
+    <div class="content">
+      <h3>Subtitle File (.srt)</h3>
+      <p>Timestamped subtitles — useful if recording long audio and need timed captions for video content.</p>
+    </div>
+  </div>
+</div>

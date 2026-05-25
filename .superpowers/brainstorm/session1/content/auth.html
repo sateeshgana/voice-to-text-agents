@@ -1,0 +1,40 @@
+<h2>Do users need to log in or create accounts?</h2>
+<p class="subtitle">Authentication affects privacy, history features, and deployment complexity.</p>
+
+<div class="options">
+  <div class="option" data-choice="no-auth" onclick="toggleSelect(this)">
+    <div class="letter">🚀</div>
+    <div class="content">
+      <h3>No Login Required</h3>
+      <p>Anyone opens the URL and starts recording immediately. No signup friction. Transcriptions are session-only — not saved between visits. <strong>Recommended for maximum reach.</strong></p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Zero friction</span>
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ No backend user management</span>
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Privacy-friendly</span>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="optional-auth" onclick="toggleSelect(this)">
+    <div class="letter">👤</div>
+    <div class="content">
+      <h3>Optional Login (Save History)</h3>
+      <p>Works without login, but users can sign in to save transcription history across sessions. Login via Google/GitHub OAuth (Netlify Identity — free tier).</p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Saves history</span>
+        <span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:12px;font-size:12px">⚠ More complexity</span>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="required-auth" onclick="toggleSelect(this)">
+    <div class="letter">🔒</div>
+    <div class="content">
+      <h3>Login Required</h3>
+      <p>Users must sign in before using the app. Full history saved. Suitable for enterprise/organization use where access control matters.</p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Access control</span>
+        <span style="background:#f8d7da;color:#721c24;padding:2px 8px;border-radius:12px;font-size:12px">✗ High friction</span>
+        <span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:12px;font-size:12px">⚠ Most complex</span>
+      </div>
+    </div>
+  </div>
+</div>

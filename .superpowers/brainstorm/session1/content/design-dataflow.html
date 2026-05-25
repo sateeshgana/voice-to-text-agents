@@ -1,0 +1,113 @@
+<h2>Design: Data Flow & Fallback Logic</h2>
+<p class="subtitle">Section 3 of 4 — how audio travels from mic to text, with every failure covered</p>
+
+<div style="font-family:sans-serif;font-size:12px">
+
+  <!-- Recording Flow -->
+  <div style="background:#fff8f0;border:2px solid #ff6b35;border-radius:10px;padding:16px;margin-bottom:14px">
+    <div style="font-weight:700;color:#ff6b35;margin-bottom:12px;font-size:13px">🎙 Step 1 — Recording (Browser)</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div style="background:white;border:1px solid #ffd8c7;border-radius:8px;padding:8px 12px;text-align:center">
+        <div>User taps Record</div>
+      </div>
+      <div style="color:#ff6b35">→</div>
+      <div style="background:white;border:1px solid #ffd8c7;border-radius:8px;padding:8px 12px;text-align:center">
+        <div>MediaRecorder API</div>
+        <div style="color:#aaa;font-size:10px">WebM / Opus codec</div>
+      </div>
+      <div style="color:#ff6b35">→</div>
+      <div style="background:white;border:1px solid #ffd8c7;border-radius:8px;padding:8px 12px;text-align:center">
+        <div>Audio chunks buffered</div>
+        <div style="color:#aaa;font-size:10px">Max 5 min / ~4MB</div>
+      </div>
+      <div style="color:#ff6b35">→</div>
+      <div style="background:white;border:1px solid #ffd8c7;border-radius:8px;padding:8px 12px;text-align:center">
+        <div>User taps Stop</div>
+        <div style="color:#aaa;font-size:10px">Blob assembled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transcription Flow -->
+  <div style="background:#f0f4ff;border:2px solid #4f46e5;border-radius:10px;padding:16px;margin-bottom:14px">
+    <div style="font-weight:700;color:#4f46e5;margin-bottom:12px;font-size:13px">⚡ Step 2 — Transcription (Netlify Function)</div>
+
+    <div style="background:white;border:1px solid #c7d0ff;border-radius:8px;padding:12px;margin-bottom:10px">
+      <div style="font-weight:600;margin-bottom:8px">POST /api/transcribe</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="color:#888;font-size:11px;margin-bottom:4px">REQUEST (multipart/form-data)</div>
+          <pre style="background:#f8f9fa;padding:8px;border-radius:6px;font-size:11px;margin:0">audio: Blob (WebM)
+language: "hi" | "ta" | "te"...
+correction: boolean
+userId?: string (JWT)</pre>
+        </div>
+        <div>
+          <div style="color:#888;font-size:11px;margin-bottom:4px">RESPONSE (JSON)</div>
+          <pre style="background:#f8f9fa;padding:8px;border-radius:6px;font-size:11px;margin:0">text: string
+language: string
+engine: "bhashini"|"groq"|"python"
+corrected: boolean
+duration: number
+timestamp: ISO string</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fallback Waterfall -->
+    <div style="background:white;border:1px solid #c7d0ff;border-radius:8px;padding:12px">
+      <div style="font-weight:600;margin-bottom:10px">🔄 Fallback Waterfall Logic</div>
+      <div style="position:relative;padding-left:20px">
+        <div style="position:absolute;left:8px;top:0;bottom:0;width:2px;background:#e0e7ff"></div>
+
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+          <div style="background:#22c55e;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-left:-10px">1</div>
+          <div style="flex:1;background:#e8f5e9;border-radius:6px;padding:8px">
+            <div style="font-weight:600;color:#166534">Bhashini API</div>
+            <div style="color:#555;font-size:11px">Call ULCA pipeline for selected language. Timeout: 15s. Best Indian accuracy. ✓ Success → return result</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+          <div style="background:#f59e0b;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-left:-10px">2</div>
+          <div style="flex:1;background:#fff8e1;border-radius:6px;padding:8px">
+            <div style="font-weight:600;color:#92400e">Groq Whisper API</div>
+            <div style="color:#555;font-size:11px">If Bhashini fails/times out. Groq Whisper Large v3 with language hint. Timeout: 20s. ✓ Success → return result</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+          <div style="background:#e63946;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-left:-10px">3</div>
+          <div style="flex:1;background:#fce4ec;border-radius:6px;padding:8px">
+            <div style="font-weight:600;color:#880e4f">Python Function (faster-whisper)</div>
+            <div style="color:#555;font-size:11px">Last resort. Runs faster-whisper (medium model) + SpeechRecognition fallback. No quota. Cold start ~8s. ✓ Always succeeds</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="background:#a855f7;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-left:-10px">✨</div>
+          <div style="flex:1;background:#fdf4ff;border:1px solid #e9d5ff;border-radius:6px;padding:8px">
+            <div style="font-weight:600;color:#7e22ce">Gemini Correction Pass (optional)</div>
+            <div style="color:#555;font-size:11px">If AI Correction toggle is ON: send raw text to Gemini 2.0 Flash with prompt: "Fix grammar, punctuation and script rendering for [language]. Return only corrected text." Adds ~1s.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Storage Flow -->
+  <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#166534;margin-bottom:12px;font-size:13px">🗄️ Step 3 — Storage & History</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:white;border:1px solid #bbf7d0;border-radius:8px;padding:10px">
+        <div style="font-weight:600;margin-bottom:6px">👤 Anonymous User</div>
+        <div style="color:#555">Result saved to <strong>localStorage</strong>.<br>Up to 20 recent transcripts.<br>Cleared on browser data clear.</div>
+      </div>
+      <div style="background:white;border:1px solid #bbf7d0;border-radius:8px;padding:10px">
+        <div style="font-weight:600;margin-bottom:6px">🔐 Logged-in User</div>
+        <div style="color:#555">Result saved to <strong>Netlify Blobs</strong>.<br>Key: <code>userId/timestamp</code><br>Unlimited history, 1GB free.</div>
+      </div>
+    </div>
+  </div>
+
+</div>

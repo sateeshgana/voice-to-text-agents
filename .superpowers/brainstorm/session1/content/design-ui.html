@@ -1,0 +1,128 @@
+<h2>Design: UI / UX Layout</h2>
+<p class="subtitle">Section 2 of 4 — Vibrant India theme, fully responsive</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-family:sans-serif">
+
+  <!-- Mobile Mockup -->
+  <div>
+    <div style="text-align:center;font-size:12px;color:#888;margin-bottom:8px;font-weight:600">📱 MOBILE</div>
+    <div style="max-width:280px;margin:0 auto;background:#fff;border-radius:28px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:3px solid #222">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,#ff6b35,#e63946);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center">
+        <div style="color:white;font-weight:700;font-size:16px">🎙 VoiceIndia</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:11px">बोलो, लिखो — Speak, Write</div>
+      </div>
+
+      <!-- Language Selector -->
+      <div style="background:#fff8f5;border:1px solid #ffd8c7;border-radius:10px;padding:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;color:#666">Language</span>
+        <span style="font-size:13px;font-weight:600;color:#ff6b35">🇮🇳 हिंदी (Hindi) ▾</span>
+      </div>
+
+      <!-- Waveform / Record Button -->
+      <div style="background:#fff3ee;border:2px dashed #ffa07a;border-radius:14px;padding:20px;text-align:center;margin-bottom:10px">
+        <div style="font-size:40px;margin-bottom:8px">🎙</div>
+        <div style="background:linear-gradient(135deg,#ff6b35,#e63946);color:white;border-radius:20px;padding:10px 24px;font-size:13px;font-weight:700;display:inline-block">
+          ● रिकॉर्ड करें
+        </div>
+        <div style="font-size:11px;color:#aaa;margin-top:8px">Tap to start recording</div>
+        <!-- Waveform bars -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:10px;height:24px">
+          <div style="width:3px;height:8px;background:#ffb347;border-radius:2px"></div>
+          <div style="width:3px;height:16px;background:#ff6b35;border-radius:2px"></div>
+          <div style="width:3px;height:24px;background:#e63946;border-radius:2px"></div>
+          <div style="width:3px;height:12px;background:#ff6b35;border-radius:2px"></div>
+          <div style="width:3px;height:20px;background:#ffb347;border-radius:2px"></div>
+          <div style="width:3px;height:8px;background:#ff6b35;border-radius:2px"></div>
+          <div style="width:3px;height:16px;background:#e63946;border-radius:2px"></div>
+        </div>
+      </div>
+
+      <!-- Text Preview -->
+      <div style="background:#fffaf7;border:1px solid #ffe4d6;border-radius:10px;padding:10px;margin-bottom:10px;min-height:60px">
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px">Preview</div>
+        <div style="font-size:13px;color:#333">नमस्ते, आज मौसम बहुत अच्छा है...</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div style="background:#ff6b35;color:white;border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:600">📋 Copy</div>
+        <div style="background:#fff3ee;color:#ff6b35;border:1px solid #ffd8c7;border-radius:8px;padding:8px;text-align:center;font-size:12px;font-weight:600">⬇ Download</div>
+      </div>
+
+      <!-- Auth hint -->
+      <div style="text-align:center;font-size:10px;color:#bbb">Sign in to save history</div>
+    </div>
+  </div>
+
+  <!-- Desktop Mockup -->
+  <div>
+    <div style="text-align:center;font-size:12px;color:#888;margin-bottom:8px;font-weight:600">💻 DESKTOP</div>
+    <div style="background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);overflow:hidden;border:1px solid #eee">
+      <!-- Nav -->
+      <div style="background:linear-gradient(135deg,#ff6b35,#e63946);padding:10px 16px;display:flex;align-items:center;justify-content:space-between">
+        <div style="color:white;font-weight:700;font-size:14px">🎙 VoiceIndia</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="background:#fff8f5;color:#ff6b35;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600">🇮🇳 हिंदी ▾</div>
+          <div style="background:rgba(255,255,255,0.2);color:white;border-radius:6px;padding:3px 10px;font-size:11px">Sign In</div>
+        </div>
+      </div>
+
+      <!-- Body: 2-column -->
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:0">
+
+        <!-- Left: Record -->
+        <div style="padding:16px;border-right:1px solid #f0ebe7">
+          <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:10px;letter-spacing:1px">RECORD</div>
+          <div style="background:#fff3ee;border:2px dashed #ffa07a;border-radius:12px;padding:24px;text-align:center;margin-bottom:12px">
+            <div style="font-size:32px;margin-bottom:10px">🎙</div>
+            <!-- Waveform -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:2px;margin-bottom:10px;height:28px">
+              <div style="width:3px;height:10px;background:#ffb347;border-radius:2px"></div>
+              <div style="width:3px;height:20px;background:#ff6b35;border-radius:2px"></div>
+              <div style="width:3px;height:28px;background:#e63946;border-radius:2px"></div>
+              <div style="width:3px;height:14px;background:#ff6b35;border-radius:2px"></div>
+              <div style="width:3px;height:22px;background:#ffb347;border-radius:2px"></div>
+              <div style="width:3px;height:8px;background:#ff6b35;border-radius:2px"></div>
+              <div style="width:3px;height:18px;background:#e63946;border-radius:2px"></div>
+              <div style="width:3px;height:12px;background:#ff6b35;border-radius:2px"></div>
+            </div>
+            <div style="background:linear-gradient(135deg,#ff6b35,#e63946);color:white;border-radius:20px;padding:8px 20px;font-size:12px;font-weight:700;display:inline-block">● Start Recording</div>
+            <div style="font-size:10px;color:#aaa;margin-top:6px">00:00 / 05:00</div>
+          </div>
+          <!-- AI Correction Toggle -->
+          <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:8px;padding:10px;font-size:11px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:600;color:#7e22ce">✨ AI Correction</div>
+              <div style="color:#aaa">Gemini grammar fix</div>
+            </div>
+            <div style="background:#a855f7;border-radius:10px;width:32px;height:18px;position:relative">
+              <div style="background:white;border-radius:50%;width:14px;height:14px;position:absolute;top:2px;right:2px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Preview + Export -->
+        <div style="padding:16px">
+          <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:10px;letter-spacing:1px">TRANSCRIPT</div>
+          <div style="background:#fffaf7;border:1px solid #ffe4d6;border-radius:8px;padding:12px;min-height:80px;margin-bottom:12px;font-size:12px;color:#333;line-height:1.6">
+            नमस्ते, आज मौसम बहुत अच्छा है। मैं आपको बताना चाहता हूं कि...
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:8px;letter-spacing:1px">EXPORT</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">
+            <div style="background:#ff6b35;color:white;border-radius:6px;padding:7px;text-align:center;font-weight:600">📋 Copy Text</div>
+            <div style="background:#fff3ee;color:#ff6b35;border:1px solid #ffd8c7;border-radius:6px;padding:7px;text-align:center;font-weight:600">📄 .txt</div>
+            <div style="background:#fff3ee;color:#ff6b35;border:1px solid #ffd8c7;border-radius:6px;padding:7px;text-align:center;font-weight:600">📝 .docx</div>
+            <div style="background:#fff3ee;color:#ff6b35;border:1px solid #ffd8c7;border-radius:6px;padding:7px;text-align:center;font-weight:600">📕 .pdf</div>
+            <div style="background:#fff3ee;color:#ff6b35;border:1px solid #ffd8c7;border-radius:6px;padding:7px;text-align:center;font-weight:600;grid-column:span 2">🎬 .srt (subtitles)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:16px;background:#f8f9fa;border-radius:8px;padding:12px;font-size:12px;color:#555">
+  <strong>Key UX decisions:</strong> Language selector is always visible in header. Recording button is large and thumb-friendly. AI Correction toggle is subtle but accessible. Text preview is editable before export. History accessed via slide-in drawer (logged-in users only).
+</div>

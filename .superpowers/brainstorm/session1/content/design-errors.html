@@ -1,0 +1,104 @@
+<h2>Design: Error Handling & Testing</h2>
+<p class="subtitle">Section 4 of 4 — every failure state handled gracefully</p>
+
+<div style="font-family:sans-serif;font-size:12px;display:grid;gap:14px">
+
+  <!-- Error States -->
+  <div style="background:#fff8f0;border:2px solid #ff6b35;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#ff6b35;margin-bottom:12px;font-size:13px">⚠️ Error States & User Messages</div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="background:#fff3ee">
+          <th style="padding:8px;text-align:left;border-radius:6px 0 0 6px;color:#ff6b35">Error</th>
+          <th style="padding:8px;text-align:left;color:#ff6b35">What user sees</th>
+          <th style="padding:8px;text-align:left;border-radius:0 6px 6px 0;color:#ff6b35">What happens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">No mic permission</td>
+          <td style="padding:8px;color:#555">"Please allow microphone access"</td>
+          <td style="padding:8px;color:#888">Browser prompt + guide shown</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">Audio too short (&lt;1s)</td>
+          <td style="padding:8px;color:#555">"Recording too short — try again"</td>
+          <td style="padding:8px;color:#888">Client-side check, no API call</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">Bhashini down</td>
+          <td style="padding:8px;color:#555">Spinner → silently falls back</td>
+          <td style="padding:8px;color:#888">Auto-retry with Groq, badge shows engine used</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">Groq quota hit</td>
+          <td style="padding:8px;color:#555">Spinner → silently falls back</td>
+          <td style="padding:8px;color:#888">Auto-retry with Python function</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">All engines fail</td>
+          <td style="padding:8px;color:#555">"Transcription failed — please try again"</td>
+          <td style="padding:8px;color:#888">Toast error, audio preserved for retry</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">Gemini correction fails</td>
+          <td style="padding:8px;color:#555">Raw transcript shown, no error</td>
+          <td style="padding:8px;color:#888">Silently skip correction, log error</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">Offline / no internet</td>
+          <td style="padding:8px;color:#555">"You're offline — connect and retry"</td>
+          <td style="padding:8px;color:#888">navigator.onLine check before API call</td>
+        </tr>
+        <tr style="border-top:1px solid #fff3ee">
+          <td style="padding:8px;font-weight:600">Recording &gt;5 min</td>
+          <td style="padding:8px;color:#555">Auto-stops + warning at 4:45</td>
+          <td style="padding:8px;color:#888">Netlify function 26s timeout respected</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Accuracy Boosters -->
+  <div style="background:#fdf4ff;border:2px solid #a855f7;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#7e22ce;margin-bottom:12px;font-size:13px">🎯 Accuracy Improvement Techniques</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:white;border:1px solid #e9d5ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;color:#7e22ce;margin-bottom:4px">Language hint injection</div>
+        <div style="color:#555">Pass <code>language</code> code to every engine. Whisper performs 30–40% better with explicit language vs auto-detect.</div>
+      </div>
+      <div style="background:white;border:1px solid #e9d5ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;color:#7e22ce;margin-bottom:4px">Audio pre-processing</div>
+        <div style="color:#555">Client-side noise gate via Web Audio API. Trim leading/trailing silence. Normalize volume before upload.</div>
+      </div>
+      <div style="background:white;border:1px solid #e9d5ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;color:#7e22ce;margin-bottom:4px">Gemini correction prompt</div>
+        <div style="color:#555">Language-aware prompt: fixes Devanagari/Tamil script, handles code-mixed speech (Hinglish, Tanglish), adds punctuation.</div>
+      </div>
+      <div style="background:white;border:1px solid #e9d5ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;color:#7e22ce;margin-bottom:4px">User-editable output</div>
+        <div style="color:#555">Text preview is editable. Users fix errors before downloading — crowdsources implicit feedback for future improvement.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testing Strategy -->
+  <div style="background:#f0f4ff;border:2px solid #4f46e5;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#4f46e5;margin-bottom:12px;font-size:13px">🧪 Testing Strategy</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div style="background:white;border:1px solid #c7d0ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;margin-bottom:4px">Unit Tests (Vitest)</div>
+        <div style="color:#555">Fallback logic, language mapping, export formatters (docx/pdf/srt), Zustand store actions</div>
+      </div>
+      <div style="background:white;border:1px solid #c7d0ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;margin-bottom:4px">Integration Tests</div>
+        <div style="color:#555">Netlify Function handler with mocked API responses for all 3 engines + Gemini correction path</div>
+      </div>
+      <div style="background:white;border:1px solid #c7d0ff;border-radius:8px;padding:10px">
+        <div style="font-weight:600;margin-bottom:4px">E2E Tests (Playwright)</div>
+        <div style="color:#555">Record → transcribe → copy flow. Auth flow (login/logout). Download each format. Mobile viewport tests.</div>
+      </div>
+    </div>
+  </div>
+
+</div>

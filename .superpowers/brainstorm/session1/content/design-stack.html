@@ -1,0 +1,66 @@
+<h2>Design: Tech Stack & Project Structure</h2>
+<p class="subtitle">Section 1 of 4 — every tool chosen for zero-cost Netlify deployment</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px">
+
+  <div style="background:#fff8f0;border:2px solid #ff6b35;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#ff6b35;margin-bottom:10px">⚛️ Frontend</div>
+    <table style="width:100%;border-collapse:collapse">
+      <tr><td style="padding:4px 0;color:#555;width:40%">Framework</td><td style="font-weight:600">React 18 + Vite</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Styling</td><td style="font-weight:600">Tailwind CSS v3</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Language</td><td style="font-weight:600">TypeScript</td></tr>
+      <tr><td style="padding:4px 0;color:#555">State</td><td style="font-weight:600">Zustand (lightweight)</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Audio</td><td style="font-weight:600">MediaRecorder API</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Waveform</td><td style="font-weight:600">wavesurfer.js</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Exports</td><td style="font-weight:600">docx.js + jsPDF</td></tr>
+    </table>
+  </div>
+
+  <div style="background:#f0f4ff;border:2px solid #4f46e5;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#4f46e5;margin-bottom:10px">⚡ Serverless (Netlify Functions)</div>
+    <table style="width:100%;border-collapse:collapse">
+      <tr><td style="padding:4px 0;color:#555;width:40%">JS Function</td><td style="font-weight:600">Node.js 20 (ESM)</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Bhashini</td><td style="font-weight:600">Official REST API</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Groq</td><td style="font-weight:600">groq-sdk npm</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Py Function</td><td style="font-weight:600">Python 3.11</td></tr>
+      <tr><td style="padding:4px 0;color:#555">STT lib</td><td style="font-weight:600">faster-whisper</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Correction</td><td style="font-weight:600">@google/generative-ai</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Auth</td><td style="font-weight:600">Netlify Identity JWT</td></tr>
+    </table>
+  </div>
+
+  <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#166534;margin-bottom:10px">🗄️ Storage & Auth</div>
+    <table style="width:100%;border-collapse:collapse">
+      <tr><td style="padding:4px 0;color:#555;width:40%">History</td><td style="font-weight:600">Netlify Blobs</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Anon session</td><td style="font-weight:600">localStorage</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Auth</td><td style="font-weight:600">Netlify Identity</td></tr>
+      <tr><td style="padding:4px 0;color:#555">Env secrets</td><td style="font-weight:600">Netlify env vars</td></tr>
+    </table>
+  </div>
+
+  <div style="background:#fdf4ff;border:2px solid #a855f7;border-radius:10px;padding:16px">
+    <div style="font-weight:700;color:#7e22ce;margin-bottom:10px">📁 Folder Structure</div>
+    <pre style="font-size:11px;color:#555;margin:0;line-height:1.6">voice-to-text-agents/
+├── src/
+│   ├── components/
+│   │   ├── Recorder.tsx
+│   │   ├── LanguageSelector.tsx
+│   │   ├── TextPreview.tsx
+│   │   ├── ExportPanel.tsx
+│   │   └── HistoryDrawer.tsx
+│   ├── hooks/
+│   │   ├── useRecorder.ts
+│   │   └── useTranscribe.ts
+│   ├── store/  (Zustand)
+│   └── App.tsx
+├── netlify/
+│   ├── functions/
+│   │   ├── transcribe.mts   (Node)
+│   │   └── transcribe_py/
+│   │       └── handler.py   (Python)
+│   └── edge-functions/
+└── netlify.toml</pre>
+  </div>
+
+</div>

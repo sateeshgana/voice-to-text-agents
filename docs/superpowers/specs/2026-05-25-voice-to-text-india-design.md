@@ -40,7 +40,7 @@ A free, public-facing web application that lets any user record their voice, sel
 |---|---|
 | JS function runtime | Node.js 20 (ESM) |
 | Python function runtime | Python 3.11 |
-| Python STT library | faster-whisper (medium model) + SpeechRecognition |
+| Python STT library | SpeechRecognition (calls Google free STT API — no model bundled, fits 50MB function limit) |
 | Auth library | Netlify Identity (JWT verification) |
 
 ### APIs (all free tier)
@@ -168,7 +168,7 @@ Executed sequentially inside the Node.js Netlify Function. Each step is attempte
 ```
 1. Bhashini ULCA API        timeout: 15s   → return on success
 2. Groq Whisper Large v3    timeout: 20s   → return on success
-3. Python faster-whisper    timeout: 25s   → return on success (always)
+3. Python SpeechRecognition timeout: 25s   → calls Google free STT via recognize_google(), no model bundled (fits Netlify 50MB function limit) → return on success (always)
 [optional] Gemini 2.0 Flash timeout: 8s    → applied after any successful step
 ```
 
@@ -182,7 +182,7 @@ The engine used is always returned in the response (`engine` field) and displaye
 2. **Audio pre-processing** — client-side Web Audio API: trim silence, noise gate, normalise volume before upload
 3. **Gemini correction prompt** — language-aware: fixes Devanagari/Tamil/other script rendering, handles code-mixed speech (Hinglish, Tanglish), adds punctuation and capitalisation
 4. **User-editable output** — text preview is editable; implicit correction loop
-5. **faster-whisper medium model** — larger than base; better accuracy with acceptable latency as last-resort fallback
+5. **SpeechRecognition + Google STT** — Python's `SpeechRecognition` library via `recognize_google()` uses Google's free web speech service; no model to bundle, reliable last-resort fallback
 
 ---
 
@@ -262,6 +262,12 @@ netlify.toml
 
   [functions]
     directory = "netlify/functions"
+
+  [functions.transcribe]
+    node_bundler = "esbuild"
+
+  [functions.transcribe_py]
+    timeout = 26  # max on Netlify free tier; enables Python cold-start + SpeechRecognition call
 
   [[redirects]]
     from = "/api/*"

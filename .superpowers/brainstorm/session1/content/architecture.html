@@ -1,0 +1,92 @@
+<h2>Recommended Architecture</h2>
+<p class="subtitle">Full fallback chain + optional AI correction — hosted entirely on Netlify free tier</p>
+
+<div style="font-family:sans-serif;padding:8px 0">
+
+  <!-- Frontend Layer -->
+  <div style="background:#fff8f0;border:2px solid #ff6b35;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <span style="font-size:20px">🌐</span>
+      <strong style="color:#ff6b35;font-size:15px">FRONTEND — React SPA (Netlify CDN)</strong>
+      <span style="background:#ff6b35;color:white;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:auto">Free</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12px">
+      <div style="background:white;border-radius:8px;padding:10px;border:1px solid #ffd8c7">
+        <div style="font-weight:600;margin-bottom:4px">🎙 Audio Recorder</div>
+        <div style="color:#666">MediaRecorder API<br>Real-time waveform viz<br>Max 5 min recording</div>
+      </div>
+      <div style="background:white;border-radius:8px;padding:10px;border:1px solid #ffd8c7">
+        <div style="font-weight:600;margin-bottom:4px">🌍 Language Selector</div>
+        <div style="color:#666">22 Indian languages<br>+ English<br>Persistent preference</div>
+      </div>
+      <div style="background:white;border-radius:8px;padding:10px;border:1px solid #ffd8c7">
+        <div style="font-weight:600;margin-bottom:4px">📄 Text Preview</div>
+        <div style="color:#666">Live streaming text<br>Edit before download<br>Copy / Download</div>
+      </div>
+      <div style="background:white;border-radius:8px;padding:10px;border:1px solid #ffd8c7">
+        <div style="font-weight:600;margin-bottom:4px">⬇️ Export</div>
+        <div style="color:#666">.txt .docx .pdf .srt<br>+ Copy to clipboard</div>
+      </div>
+      <div style="background:white;border-radius:8px;padding:10px;border:1px solid #ffd8c7">
+        <div style="font-weight:600;margin-bottom:4px">👤 Auth (Optional)</div>
+        <div style="color:#666">Netlify Identity<br>Google/GitHub OAuth<br>No login = still works</div>
+      </div>
+      <div style="background:white;border-radius:8px;padding:10px;border:1px solid #ffd8c7">
+        <div style="font-weight:600;margin-bottom:4px">📜 History</div>
+        <div style="color:#666">localStorage (anon)<br>Netlify Blobs (auth'd)<br>1GB free storage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div style="text-align:center;font-size:22px;margin:4px 0">⬇️ Audio blob → POST /api/transcribe</div>
+
+  <!-- Serverless Layer -->
+  <div style="background:#f0f4ff;border:2px solid #4f46e5;border-radius:12px;padding:20px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <span style="font-size:20px">⚡</span>
+      <strong style="color:#4f46e5;font-size:15px">SERVERLESS — Netlify Functions</strong>
+      <span style="background:#4f46e5;color:white;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:auto">125k req/month free</span>
+    </div>
+
+    <!-- Fallback Chain -->
+    <div style="background:white;border-radius:8px;padding:16px;border:1px solid #c7d0ff">
+      <div style="font-weight:700;font-size:13px;color:#4f46e5;margin-bottom:12px">🔄 STT Fallback Chain (Node.js Function)</div>
+      <div style="display:flex;gap:8px;align-items:stretch;font-size:12px">
+        <div style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px;flex:1">
+          <div style="font-weight:700;color:#2e7d32">1️⃣ Bhashini API</div>
+          <div style="color:#555;margin-top:4px">🇮🇳 Govt of India<br>All 22 languages<br>Best Indian accuracy<br><em>Free, no limit</em></div>
+        </div>
+        <div style="display:flex;align-items:center;color:#999;font-size:18px">→</div>
+        <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:10px;flex:1">
+          <div style="font-weight:700;color:#f57f17">2️⃣ Groq Whisper</div>
+          <div style="color:#555;margin-top:4px">OpenAI Whisper<br>All languages<br>Blazing fast<br><em>7,200 sec/day free</em></div>
+        </div>
+        <div style="display:flex;align-items:center;color:#999;font-size:18px">→</div>
+        <div style="background:#fce4ec;border:1px solid #f48fb1;border-radius:8px;padding:10px;flex:1">
+          <div style="font-weight:700;color:#880e4f">3️⃣ Python Function</div>
+          <div style="color:#555;margin-top:4px">faster-whisper<br>SpeechRecognition<br>No quota limit<br><em>Runs on Netlify</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Correction -->
+    <div style="background:white;border-radius:8px;padding:16px;border:1px solid #c7d0ff;margin-top:10px">
+      <div style="font-weight:700;font-size:13px;color:#7b2ff7;margin-bottom:8px">✨ Gemini Correction Pass <span style="background:#ede7f6;color:#7b2ff7;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500">Feature Flag</span></div>
+      <div style="font-size:12px;color:#555">Raw transcript → <strong>Gemini 2.0 Flash</strong> (free: 1,500 req/day) → Corrected text with proper script, punctuation, grammar. Toggle ON/OFF per user or globally.</div>
+    </div>
+  </div>
+
+  <!-- Storage -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px;font-size:12px">
+      <div style="font-weight:700;color:#166534;margin-bottom:6px">🗄️ Netlify Blobs (Storage)</div>
+      <div style="color:#555">Transcription history for logged-in users<br>Keyed by user ID + timestamp<br><strong>1 GB free</strong></div>
+    </div>
+    <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:14px;font-size:12px">
+      <div style="font-weight:700;color:#1e40af;margin-bottom:6px">🔐 Netlify Identity (Auth)</div>
+      <div style="color:#555">Google / GitHub OAuth<br>Anonymous use always works<br><strong>1,000 active users free</strong></div>
+    </div>
+  </div>
+
+</div>

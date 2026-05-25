@@ -1,0 +1,47 @@
+<h2>How should Speech-to-Text work?</h2>
+<p class="subtitle">This is the most important architectural decision — it affects cost, accuracy, and offline capability.</p>
+
+<div class="options">
+  <div class="option" data-choice="browser-first" onclick="toggleSelect(this)">
+    <div class="letter">🌐</div>
+    <div class="content">
+      <h3>Browser Web Speech API (Primary)</h3>
+      <p><strong>100% free, zero backend</strong> — uses Chrome/Edge's built-in speech recognition. Supports Hindi, Tamil, Telugu, Bengali and more. Works instantly, no server needed. Falls back to Groq Whisper API (free tier: 7,200 sec/day) when browser API fails or language unsupported.</p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Zero cost</span>
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ No backend needed</span>
+        <span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:12px;font-size:12px">⚠ Chrome only for best results</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="groq-primary" onclick="toggleSelect(this)">
+    <div class="letter">⚡</div>
+    <div class="content">
+      <h3>Groq Whisper API (Primary)</h3>
+      <p><strong>Best accuracy, free tier</strong> — Groq runs OpenAI Whisper at blazing speed. Free tier gives 7,200 seconds/day. Requires a Netlify serverless function to proxy the API key. Falls back to browser Web Speech API when quota exhausted.</p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Highest accuracy</span>
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ All languages</span>
+        <span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:12px;font-size:12px">⚠ Needs serverless function</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="bhashini-primary" onclick="toggleSelect(this)">
+    <div class="letter">🇮🇳</div>
+    <div class="content">
+      <h3>Bhashini API (Indian Gov — Primary)</h3>
+      <p><strong>Best for Indian languages</strong> — India's official free AI translation &amp; STT platform built for all 22 scheduled languages. Trained specifically on Indian accents. Requires free registration. Falls back to Groq Whisper. Recommended for production Indian language apps.</p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ Best Indian accuracy</span>
+        <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:12px;font-size:12px">✓ All 22 official languages</span>
+        <span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:12px;font-size:12px">⚠ Registration required</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:24px;padding:16px;background:#f8f9fa;border-radius:8px;border-left:4px solid #6c757d">
+  <p style="margin:0;font-size:13px;color:#495057"><strong>Python fallback note:</strong> All 3 options can fall back to a Python Netlify Function running <code>faster-whisper</code> or <code>SpeechRecognition</code> library for offline/no-quota scenarios.</p>
+</div>
