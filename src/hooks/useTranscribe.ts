@@ -14,17 +14,42 @@ declare global {
   }
 }
 
-/** Execute reCAPTCHA v3 and return a token. Returns '' if not loaded (dev without key). */
+// ── reCAPTCHA setup ───────────────────────────────────────────────────────────
+// Site key is fetched from /api/config (reads process.env.recapcha_key server-side).
+// Cached after first fetch; script injected into <head> once.
+
+let recaptchaSiteKey = ''
+let recaptchaScriptLoaded = false
+
+async function loadRecaptcha(): Promise<void> {
+  if (recaptchaScriptLoaded) return
+  try {
+    const res = await fetch('/api/config')
+    if (!res.ok) return
+    const data = await res.json() as { recaptchaSiteKey?: string }
+    recaptchaSiteKey = data.recaptchaSiteKey ?? ''
+    if (!recaptchaSiteKey) return
+
+    // Inject the reCAPTCHA script once
+    const script = document.createElement('script')
+    script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`
+    script.async = true
+    document.head.appendChild(script)
+    recaptchaScriptLoaded = true
+  } catch {
+    // reCAPTCHA unavailable — proceed without token (server will accept it)
+  }
+}
+
+// Load reCAPTCHA as soon as this module is imported
+loadRecaptcha()
+
 async function getRecaptchaToken(): Promise<string> {
-  // import.meta.env is typed by vite/client; we access it via bracket notation to avoid strict-TS errors
-  // when vite/client is not in tsconfig types (it's resolved at bundle time by Vite).
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const siteKey = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_RECAPTCHA_KEY
-  if (!siteKey || !window.grecaptcha) return ''
+  if (!recaptchaSiteKey || !window.grecaptcha) return ''
   return new Promise<string>((resolve) => {
     window.grecaptcha.ready(async () => {
       try {
-        const token = await window.grecaptcha.execute(siteKey, { action: 'transcribe' })
+        const token = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'transcribe' })
         resolve(token)
       } catch {
         resolve('')
@@ -32,6 +57,8 @@ async function getRecaptchaToken(): Promise<string> {
     })
   })
 }
+
+// ── Hook ──────────────────────────────────────────────────────────────────────
 
 export function useTranscribe() {
   const { setTranscript, setProcessing, setError, addToHistory, correctionEnabled, language } = useAppStore()
