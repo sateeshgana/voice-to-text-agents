@@ -4,9 +4,11 @@ import { TextPreview }      from './components/TextPreview'
 import { ExportPanel }      from './components/ExportPanel'
 import { HistoryDrawer }    from './components/HistoryDrawer'
 import { useAppStore }      from './store/appStore'
+import { useAuth }          from './hooks/useAuth'
 
 export default function App() {
   const { history } = useAppStore()
+  const { user, login, logout } = useAuth()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -20,6 +22,15 @@ export default function App() {
           <div className="flex items-center gap-3">
             <LanguageSelector />
             {history.length > 0 && <HistoryDrawer />}
+            {user ? (
+              <button onClick={logout} className="text-white/80 hover:text-white text-xs font-medium">
+                Sign Out
+              </button>
+            ) : (
+              <button onClick={login} className="bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       </header>
