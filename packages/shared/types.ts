@@ -6,15 +6,17 @@ export interface Language {
   flag: string        // emoji e.g. "🇮🇳"
 }
 
+export type LanguageCode = 'hi' | 'bn' | 'te' | 'mr' | 'ta' | 'ur' | 'gu' | 'kn' | 'ml' | 'or' | 'pa' | 'as' | 'mai' | 'sa' | 'sat' | 'ks' | 'ne' | 'sd' | 'kok' | 'doi' | 'mni' | 'brx' | 'en-IN'
+
 export interface TranscribeRequest {
-  language: string    // BCP-47 code
-  correction: boolean // run Gemini correction pass
-  userId?: string     // Netlify Identity JWT (optional)
+  language: LanguageCode // BCP-47 code
+  correction: boolean    // run Gemini correction pass
+  userId?: string        // Netlify Identity JWT (optional)
 }
 
 export interface TranscribeResponse {
   text: string
-  language: string
+  language: LanguageCode
   engine: 'bhashini' | 'groq' | 'python'
   corrected: boolean
   duration: number    // seconds
@@ -29,7 +31,7 @@ export interface TranscribeError {
 export interface HistoryItem {
   id: string
   text: string
-  language: string
+  language: LanguageCode
   engine: 'bhashini' | 'groq' | 'python'
   corrected: boolean
   duration: number

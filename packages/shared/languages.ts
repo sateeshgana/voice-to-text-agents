@@ -1,4 +1,4 @@
-import type { Language } from './types'
+import type { Language, LanguageCode } from './types'
 
 export const LANGUAGES: Language[] = [
   { code: 'hi', name: 'Hindi',      nativeName: 'हिंदी',      script: 'Devanagari', flag: '🇮🇳' },
@@ -30,4 +30,8 @@ export const DEFAULT_LANGUAGE = LANGUAGES[0] // Hindi
 
 export function getLanguageByCode(code: string): Language {
   return LANGUAGES.find(l => l.code === code) ?? DEFAULT_LANGUAGE
+}
+
+export function isValidLanguageCode(code: string): code is LanguageCode {
+  return LANGUAGES.some(l => l.code === code)
 }
