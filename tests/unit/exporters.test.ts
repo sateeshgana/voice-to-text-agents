@@ -24,6 +24,11 @@ describe('generateSrt', () => {
     const blocks = srt.split('\n\n').filter(Boolean)
     expect(blocks.length).toBeGreaterThanOrEqual(2)
   })
+
+  it('returns empty string for empty input', () => {
+    const srt = generateSrt('', 10)
+    expect(srt).toBe('')
+  })
 })
 
 describe('generateDocxBlob', () => {

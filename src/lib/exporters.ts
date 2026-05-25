@@ -6,7 +6,9 @@ export function generateTxt(text: string): Blob {
 }
 
 export function generateSrt(text: string, durationSec: number): string {
-  const words = text.trim().split(/\s+/)
+  const trimmed = text.trim()
+  if (!trimmed) return ''
+  const words = trimmed.split(/\s+/)
   const chunkSize = 5
   const chunks: string[] = []
   for (let i = 0; i < words.length; i += chunkSize) {
@@ -62,5 +64,5 @@ export function downloadBlob(blob: Blob, filename: string): void {
   a.href = url
   a.download = filename
   a.click()
-  URL.revokeObjectURL(url)
+  setTimeout(() => URL.revokeObjectURL(url), 100)
 }
