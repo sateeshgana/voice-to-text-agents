@@ -11,6 +11,10 @@ export function buildFallbackChain(): Engine[] {
   return ['bhashini', 'groq', 'python']
 }
 
+/**
+ * Maps a failed engine name to the next engine to try.
+ * Exported for unit testing. The handler loop uses buildFallbackChain() directly.
+ */
 export function selectEngine(failedEngine: string | null): Engine {
   if (!failedEngine) return 'bhashini'
   if (failedEngine === 'BHASHINI_FAIL') return 'groq'
@@ -116,13 +120,13 @@ export default async function handler(req: Request, _ctx: Context) {
 
   try {
     const formData = await req.formData()
-    const audioFile = formData.get('audio') as File | null
+    const audioEntry = formData.get('audio')
+    if (!audioEntry || typeof audioEntry === 'string') {
+      return new Response(JSON.stringify({ error: 'No audio file provided', code: 'UNKNOWN' }), { status: 400, headers: corsHeaders })
+    }
+    const audioFile = audioEntry as File
     const language  = (formData.get('language') as string) || 'hi'
     const correction = formData.get('correction') === 'true'
-
-    if (!audioFile) {
-      return new Response(JSON.stringify({ error: 'No audio provided', code: 'UNKNOWN' }), { status: 400, headers: corsHeaders })
-    }
 
     // Mobile apps (React Native) send AAC (iOS) or M4A/OGG (Android).
     // To support those formats, add ffmpeg-wasm conversion here:
