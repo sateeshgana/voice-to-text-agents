@@ -74,7 +74,7 @@ async function callGroq(audioBuffer: Buffer, language: string): Promise<string> 
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) throw new Error('GROQ_FAIL: missing key')
   const groq = new Groq({ apiKey, timeout: 20000 })
-  const file = new File([audioBuffer], 'audio.webm', { type: 'audio/webm' })
+  const file = new File([audioBuffer.buffer as ArrayBuffer], 'audio.webm', { type: 'audio/webm' })
   const result = await groq.audio.transcriptions.create({
     file,
     model: 'whisper-large-v3',
