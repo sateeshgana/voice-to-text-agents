@@ -1,14 +1,17 @@
+import { useState }          from 'react'
 import { LanguageSelector } from './components/LanguageSelector'
 import { Recorder }         from './components/Recorder'
 import { TextPreview }      from './components/TextPreview'
 import { ExportPanel }      from './components/ExportPanel'
 import { HistoryDrawer }    from './components/HistoryDrawer'
+import { SupportForm }      from './components/SupportForm'
 import { useAppStore }      from './store/appStore'
 import { useAuth }          from './hooks/useAuth'
 
 export default function App() {
   const { history, language } = useAppStore()
   const { user, login, logout } = useAuth()
+  const [supportOpen, setSupportOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,6 +67,21 @@ export default function App() {
           Powered by Groq · DeepSeek · Hosted free on Netlify
         </p>
       </main>
+
+      {/* Floating help button — bottom right */}
+      <button
+        onClick={() => setSupportOpen(true)}
+        className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full shadow-lg
+          bg-gradient-to-br from-[#ff6b35] to-[#e63946] text-white text-xl
+          flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+        aria-label="Open support form"
+        title="Help &amp; Support"
+      >
+        ?
+      </button>
+
+      {/* Support / Help modal */}
+      <SupportForm open={supportOpen} onClose={() => setSupportOpen(false)} />
     </div>
   )
 }
