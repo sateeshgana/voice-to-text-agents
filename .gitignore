@@ -27,3 +27,11 @@ dist-ssr
 coverage
 playwright-report
 test-results
+
+# Environment variables — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Superpowers brainstorm session files
+.superpowers/
