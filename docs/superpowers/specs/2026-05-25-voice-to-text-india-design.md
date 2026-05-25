@@ -285,10 +285,42 @@ GEMINI_API_KEY
 
 ---
 
-## 15. Constraints & Non-Goals
+## 15. Future Mobile App Compatibility
+
+The following decisions are made **now** to avoid a rewrite when native mobile apps (React Native / Flutter) are built later. Each adds minimal effort to the web build.
+
+### 1. API-first backend (no browser coupling)
+All STT logic lives exclusively in Netlify Functions — never in browser-only code. A mobile app calls the exact same `POST /api/transcribe` endpoint. **Action:** add `Access-Control-Allow-Origin: *` CORS headers to all functions so requests from a mobile app's origin are accepted.
+
+### 2. Accept multiple audio formats
+Browser records WebM/Opus. Mobile apps record AAC (iOS) or M4A/OGG (Android). **Action:** the Node.js transcribe function detects MIME type from the incoming blob and converts to WAV via `ffmpeg-wasm` (runs in Node, no binary install) before passing to Bhashini/Groq/Python. This makes the API format-agnostic from day one.
+
+### 3. PWA as the bridge
+Add Progressive Web App support to the React build (Vite PWA plugin). This gives users an "Add to Home Screen" native-like experience on Android/iOS immediately, before a native app exists, and validates the mobile UX with real users at zero cost. **Action:** add `vite-plugin-pwa`, a `manifest.json` with saffron theme colour, and a service worker for offline shell caching.
+
+### 4. Shared types package
+Extract TypeScript API types (`TranscribeRequest`, `TranscribeResponse`, `Language`) and the language metadata list into `packages/shared/` inside the repo. The React web app imports from there; a future React Native app imports the same package. **Action:** set up a simple monorepo layout with `packages/shared/` — no build tooling needed beyond `tsconfig` path aliases for now.
+
+### Mobile-ready folder structure addition
+```
+voice-to-text-agents/
+├── packages/
+│   └── shared/
+│       ├── languages.ts      # Language codes, names, scripts (used by web + mobile)
+│       └── types.ts          # TranscribeRequest / TranscribeResponse types
+├── src/  (web app — imports from packages/shared)
+├── netlify/
+└── apps/  (reserved — mobile app goes here when ready)
+    └── mobile/  (React Native / Expo — future)
+```
+
+---
+
+## 16. Constraints & Non-Goals
 
 - **Max recording length:** 5 minutes (Netlify function timeout constraint)
 - **No real-time streaming STT:** Audio uploaded after recording stops (simplicity + reliability)
 - **No translation:** App transcribes in the spoken language — does not translate between languages
 - **No audio storage:** Audio blobs are never persisted; only text transcripts are saved
 - **Netlify free tier only:** No paid add-ons, no external databases
+- **No native mobile app yet:** PWA covers mobile UX for v1; native app is a future milestone using the shared API and types already in place
