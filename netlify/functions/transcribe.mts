@@ -57,6 +57,14 @@ export async function applyAICorrection(
 
 // ── API callers ───────────────────────────────────────────────────────────────
 
+/**
+ * Groq Whisper only accepts bare ISO-639-1 codes (e.g. "en", "hi").
+ * Strip the region subtag so "en-IN" → "en", "pa-IN" → "pa", etc.
+ */
+function toGroqLang(language: string): string {
+  return language.split('-')[0]
+}
+
 async function callGroq(audioBuffer: Buffer, language: string): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) throw new Error('GROQ_FAIL: missing key')
@@ -71,7 +79,7 @@ async function callGroq(audioBuffer: Buffer, language: string): Promise<string> 
   const result = await groq.audio.transcriptions.create({
     file,
     model: 'whisper-large-v3',
-    language,
+    language: toGroqLang(language),
     response_format: 'text',
   })
   if (!result) throw new Error('GROQ_FAIL: empty response')
@@ -95,6 +103,32 @@ async function callPython(audioBuffer: Buffer, language: string): Promise<string
   return data.text ?? ''
 }
 
+// ── reCAPTCHA v3 verification ─────────────────────────────────────────────────
+
+async function verifyRecaptcha(token: string): Promise<{ ok: boolean; score: number }> {
+  const secretKey = process.env.recaptha_secreate  // exact Netlify env var name (with typo)
+  if (!secretKey) {
+    // If the secret key is not configured, skip verification (dev/CI)
+    console.warn('[recaptcha] Secret key not configured — skipping verification')
+    return { ok: true, score: 1 }
+  }
+  try {
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${encodeURIComponent(secretKey)}&response=${encodeURIComponent(token)}`,
+      signal: AbortSignal.timeout(5000),
+    })
+    const data = await res.json() as { success: boolean; score: number; action?: string }
+    const score = data.score ?? 0
+    return { ok: data.success && score >= 0.5, score }
+  } catch (err) {
+    console.warn('[recaptcha] Verification request failed:', err)
+    // On network error, fail open so legitimate users are not blocked
+    return { ok: true, score: 0.5 }
+  }
+}
+
 // ── Main handler ──────────────────────────────────────────────────────────────
 
 export default async function handler(req: Request, _ctx: Context) {
@@ -113,6 +147,17 @@ export default async function handler(req: Request, _ctx: Context) {
 
   try {
     const formData = await req.formData()
+
+    // reCAPTCHA v3 — verify before doing any heavy work
+    const recaptchaToken = (formData.get('recaptcha_token') as string) || ''
+    if (recaptchaToken) {
+      const { ok, score } = await verifyRecaptcha(recaptchaToken)
+      if (!ok) {
+        console.warn('[recaptcha] Blocked: score =', score)
+        return new Response(JSON.stringify({ error: 'reCAPTCHA verification failed', code: 'RECAPTCHA_FAIL' }), { status: 403, headers: corsHeaders })
+      }
+    }
+
     const audioEntry = formData.get('audio')
     if (!audioEntry || typeof audioEntry === 'string') {
       return new Response(JSON.stringify({ error: 'No audio file provided', code: 'UNKNOWN' }), { status: 400, headers: corsHeaders })

@@ -5,6 +5,34 @@ import { preprocessAudio } from '../lib/audioProcessor'
 import type { TranscribeResponse, TranscribeError } from '@shared/types'
 import { useAuth } from './useAuth'
 
+declare global {
+  interface Window {
+    grecaptcha: {
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+      ready: (cb: () => void) => void
+    }
+  }
+}
+
+/** Execute reCAPTCHA v3 and return a token. Returns '' if not loaded (dev without key). */
+async function getRecaptchaToken(): Promise<string> {
+  // import.meta.env is typed by vite/client; we access it via bracket notation to avoid strict-TS errors
+  // when vite/client is not in tsconfig types (it's resolved at bundle time by Vite).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const siteKey = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_RECAPTCHA_KEY
+  if (!siteKey || !window.grecaptcha) return ''
+  return new Promise<string>((resolve) => {
+    window.grecaptcha.ready(async () => {
+      try {
+        const token = await window.grecaptcha.execute(siteKey, { action: 'transcribe' })
+        resolve(token)
+      } catch {
+        resolve('')
+      }
+    })
+  })
+}
+
 export function useTranscribe() {
   const { setTranscript, setProcessing, setError, addToHistory, correctionEnabled, language } = useAppStore()
   const { user } = useAuth()
@@ -25,10 +53,14 @@ export function useTranscribe() {
     try {
       const processedBlob = await preprocessAudio(audioBlob)
 
+      // reCAPTCHA v3 — execute before building the request
+      const recaptchaToken = await getRecaptchaToken()
+
       const form = new FormData()
       form.append('audio', processedBlob, 'recording.webm')
       form.append('language', language.code)
       form.append('correction', String(correctionEnabled))
+      if (recaptchaToken) form.append('recaptcha_token', recaptchaToken)
 
       const res = await fetch('/api/transcribe', { method: 'POST', body: form })
       const data = await res.json() as TranscribeResponse | TranscribeError

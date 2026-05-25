@@ -10,6 +10,7 @@
 
 [functions.transcribe_py]
   timeout = 26
+  # Python function — entry point is transcribe_py.py (flat file in functions dir)
 
 [[headers]]
   for = "/.netlify/functions/*"
