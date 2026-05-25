@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { submitSupportForm } from '../hooks/useHubspot'
 
 interface Props {
-  open: boolean
+  open:    boolean
   onClose: () => void
 }
 
@@ -20,28 +20,30 @@ const ISSUE_TYPES = [
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
 export function SupportForm({ open, onClose }: Props) {
-  const [name,      setName]      = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName,  setLastName]  = useState('')
   const [email,     setEmail]     = useState('')
+  const [phone,     setPhone]     = useState('')
   const [issueType, setIssueType] = useState(ISSUE_TYPES[0])
   const [message,   setMessage]   = useState('')
   const [formState, setFormState] = useState<FormState>('idle')
   const [errorMsg,  setErrorMsg]  = useState('')
-  const nameRef = useRef<HTMLInputElement>(null)
+  const firstNameRef = useRef<HTMLInputElement>(null)
 
   // Focus first field when modal opens; reset on close
   useEffect(() => {
     if (open) {
-      setTimeout(() => nameRef.current?.focus(), 80)
+      setTimeout(() => firstNameRef.current?.focus(), 80)
     } else {
-      // reset after close animation
       setTimeout(() => {
-        setName(''); setEmail(''); setIssueType(ISSUE_TYPES[0])
+        setFirstName(''); setLastName(''); setEmail('')
+        setPhone(''); setIssueType(ISSUE_TYPES[0])
         setMessage(''); setFormState('idle'); setErrorMsg('')
       }, 300)
     }
   }, [open])
 
-  // Close on Escape key
+  // Close on Escape
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -54,7 +56,7 @@ export function SupportForm({ open, onClose }: Props) {
     setFormState('submitting')
     setErrorMsg('')
 
-    const result = await submitSupportForm({ name, email, issueType, message })
+    const result = await submitSupportForm({ firstName, lastName, email, phone, issueType, message })
 
     if (result.ok) {
       setFormState('success')
@@ -66,22 +68,18 @@ export function SupportForm({ open, onClose }: Props) {
 
   if (!open) return null
 
-  const inputClass = `w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2
-    focus:ring-orange-300 border-gray-200 bg-white transition`
+  const inputClass = `w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-white
+    focus:outline-none focus:ring-2 focus:ring-orange-300 transition placeholder-gray-400`
 
   return (
-    /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="support-form-title"
     >
-      {/* Dimmed overlay */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal card */}
       <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-up">
@@ -102,7 +100,7 @@ export function SupportForm({ open, onClose }: Props) {
         </div>
 
         {/* Body */}
-        <div className="px-5 py-5">
+        <div className="px-5 py-5 max-h-[80vh] overflow-y-auto">
 
           {/* Success state */}
           {formState === 'success' ? (
@@ -123,18 +121,30 @@ export function SupportForm({ open, onClose }: Props) {
           ) : (
             <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
 
-              {/* Name */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Your Name *</label>
-                <input
-                  ref={nameRef}
-                  type="text"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="Priya Sharma"
-                  required
-                  className={inputClass}
-                />
+              {/* First Name + Last Name */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1">First Name *</label>
+                  <input
+                    ref={firstNameRef}
+                    type="text"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                    placeholder="Priya"
+                    required
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1">Last Name</label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
+                    placeholder="Sharma"
+                    className={inputClass}
+                  />
+                </div>
               </div>
 
               {/* Email */}
@@ -148,6 +158,24 @@ export function SupportForm({ open, onClose }: Props) {
                   required
                   className={inputClass}
                 />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Phone Number</label>
+                <div className="flex gap-2">
+                  <span className="flex items-center px-3 py-2.5 border border-gray-200 rounded-xl bg-gray-50
+                    text-sm text-gray-500 font-medium whitespace-nowrap">
+                    🇮🇳 +91
+                  </span>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    placeholder="98765 43210"
+                    className={`${inputClass} flex-1`}
+                  />
+                </div>
               </div>
 
               {/* Issue type */}
@@ -185,7 +213,7 @@ export function SupportForm({ open, onClose }: Props) {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={formState === 'submitting' || !name.trim() || !email.trim() || !message.trim()}
+                disabled={formState === 'submitting' || !firstName.trim() || !email.trim() || !message.trim()}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#e63946]
                   text-white font-bold text-sm active:scale-95 transition
                   disabled:opacity-50 disabled:cursor-not-allowed"
