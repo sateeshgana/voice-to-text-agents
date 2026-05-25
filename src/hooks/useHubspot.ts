@@ -2,8 +2,10 @@
 // Submits support form data to HubSpot Forms API v3.
 // Portal ID and form GUID are public-facing (safe in client code — same as the embed script).
 
-const PORTAL_ID = '244822982'
-const FORM_GUID = 'aa3482c3-cf8d-4ce8-8360-5cced50b1083'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const _env = (import.meta as any).env as Record<string, string>
+const PORTAL_ID = _env.VITE_HUBSPOT_PORTAL_ID ?? '244822982'
+const FORM_GUID  = _env.VITE_HUBSPOT_FORM_ID   ?? 'aa3482c3-cf8d-4ce8-8360-5cced50b1083'
 
 export interface SupportFormData {
   firstName: string
