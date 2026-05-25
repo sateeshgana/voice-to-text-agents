@@ -71,10 +71,10 @@ export default function App() {
         </p>
       </main>
 
-      {/* Floating help button — bottom right */}
+      {/* Floating help button — sits above the reCAPTCHA badge (badge is ~60px tall at bottom-right) */}
       <button
         onClick={() => setSupportOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full shadow-lg
+        className="fixed bottom-20 right-6 z-40 w-12 h-12 rounded-full shadow-lg
           bg-gradient-to-br from-[#ff6b35] to-[#e63946] text-white text-xl
           flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
         aria-label="Open support form"
