@@ -4,6 +4,8 @@ export interface Language {
   nativeName: string  // e.g. "हिंदी"
   script: string      // Unicode script name e.g. "Devanagari"
   flag: string        // emoji e.g. "🇮🇳"
+  tagline: string     // "Speak, Write" in that language e.g. "बोलो, लिखो"
+  rtl?: boolean       // true for right-to-left scripts (Urdu, Kashmiri, Sindhi)
 }
 
 export type LanguageCode = 'hi' | 'bn' | 'te' | 'mr' | 'ta' | 'ur' | 'gu' | 'kn' | 'ml' | 'or' | 'pa' | 'as' | 'mai' | 'sa' | 'sat' | 'ks' | 'ne' | 'sd' | 'kok' | 'doi' | 'mni' | 'brx' | 'en-IN'

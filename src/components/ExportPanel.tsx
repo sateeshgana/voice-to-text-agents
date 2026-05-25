@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useAppStore } from '../store/appStore'
 import { generateTxt, generateSrt, generateDocxBlob, generatePdfBlob, downloadBlob } from '../lib/exporters'
 
@@ -5,9 +6,12 @@ export function ExportPanel() {
   const { transcript, language, history } = useAppStore()
   const duration = history[0]?.duration ?? 10
   const disabled = !transcript.trim()
+  const [copied, setCopied] = useState(false)
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(transcript)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const downloadTxt  = () => downloadBlob(generateTxt(transcript), `transcript-${language.code}.txt`)
@@ -24,9 +28,12 @@ export function ExportPanel() {
       <button
         onClick={copyToClipboard}
         disabled={disabled}
-        className={`${btnBase} w-full bg-gradient-to-r from-[#ff6b35] to-[#e63946] text-white`}
+        className={`${btnBase} w-full text-white transition-all
+          ${copied
+            ? 'bg-green-500'
+            : 'bg-gradient-to-r from-[#ff6b35] to-[#e63946]'}`}
       >
-        📋 Copy to Clipboard
+        {copied ? '✅ Copied!' : '📋 Copy to Clipboard'}
       </button>
       <div className="grid grid-cols-2 gap-2">
         {[

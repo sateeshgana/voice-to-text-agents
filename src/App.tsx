@@ -7,7 +7,7 @@ import { useAppStore }      from './store/appStore'
 import { useAuth }          from './hooks/useAuth'
 
 export default function App() {
-  const { history } = useAppStore()
+  const { history, language } = useAppStore()
   const { user, login, logout } = useAuth()
 
   return (
@@ -17,7 +17,11 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
             <h1 className="text-white font-bold text-xl leading-tight">🎙 VoiceIndia</h1>
-            <p className="text-white/70 text-xs">बोलो, लिखो — Speak, Write</p>
+            <p className="text-white/70 text-xs" dir={language.rtl ? 'rtl' : 'ltr'}>
+              {language.code === 'en-IN'
+                ? 'Speak, Write'
+                : `${language.tagline} — Speak, Write`}
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <LanguageSelector />

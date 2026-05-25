@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import WaveSurfer from 'wavesurfer.js'
 import { useRecorder } from '../hooks/useRecorder'
 import { useTranscribe } from '../hooks/useTranscribe'
@@ -16,6 +16,12 @@ export function Recorder() {
   const { isProcessing } = useAppStore()
   const waveRef = useRef<HTMLDivElement>(null)
   const wavesurferRef = useRef<WaveSurfer | null>(null)
+
+  // Stable bar heights — computed once, not on every render tick
+  const barHeights = useMemo(
+    () => Array.from({ length: 20 }, () => Math.floor(Math.random() * 40 + 8)),
+    []
+  )
 
   // Init WaveSurfer for playback after recording
   useEffect(() => {
@@ -64,11 +70,11 @@ export function Recorder() {
         )}
         {state === 'recording' && (
           <div className="flex items-center gap-1">
-            {Array.from({ length: 20 }).map((_, i) => (
+            {barHeights.map((h, i) => (
               <div
                 key={i}
                 className="w-1 bg-orange-400 rounded-full animate-pulse"
-                style={{ height: `${Math.random() * 40 + 8}px`, animationDelay: `${i * 50}ms` }}
+                style={{ height: `${h}px`, animationDelay: `${i * 50}ms` }}
               />
             ))}
           </div>

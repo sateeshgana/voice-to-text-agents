@@ -18,7 +18,7 @@ beforeEach(() => {
 describe('setLanguage', () => {
   it('updates the active language', () => {
     const { setLanguage } = useAppStore.getState()
-    setLanguage({ code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', script: 'Tamil', flag: '🇮🇳' })
+    setLanguage({ code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', script: 'Tamil', flag: '🇮🇳', tagline: 'பேசு, எழுது' })
     expect(useAppStore.getState().language.code).toBe('ta')
   })
 })

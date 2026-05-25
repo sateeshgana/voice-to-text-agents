@@ -6,8 +6,9 @@ const ENGINE_LABELS: Record<string, { label: string; color: string }> = {
 }
 
 export function TextPreview() {
-  const { transcript, setTranscript, correctionEnabled, toggleCorrection, history, error } = useAppStore()
+  const { transcript, setTranscript, correctionEnabled, toggleCorrection, history, error, language } = useAppStore()
   const lastItem = history[0]
+  const isRtl = !!language.rtl
 
   return (
     <div className="space-y-3">
@@ -16,20 +17,21 @@ export function TextPreview() {
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Transcript</span>
         <div className="flex items-center gap-2">
           {lastItem && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ENGINE_LABELS[lastItem.engine].color}`}>
-              {ENGINE_LABELS[lastItem.engine].label}
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ENGINE_LABELS[lastItem.engine]?.color ?? ''}`}>
+              {ENGINE_LABELS[lastItem.engine]?.label}
               {lastItem.corrected && ' ✨'}
             </span>
           )}
         </div>
       </div>
 
-      {/* Editable textarea */}
+      {/* Editable textarea — RTL for Urdu / Kashmiri / Sindhi */}
       <textarea
         value={transcript}
         onChange={(e) => setTranscript(e.target.value)}
         placeholder="Your transcription will appear here…"
         rows={8}
+        dir={isRtl ? 'rtl' : 'ltr'}
         className="w-full bg-orange-50 border border-orange-200 rounded-xl p-3 text-gray-800
                    text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-300
                    placeholder:text-gray-300"
