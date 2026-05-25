@@ -61,7 +61,13 @@ async function callGroq(audioBuffer: Buffer, language: string): Promise<string> 
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) throw new Error('GROQ_FAIL: missing key')
   const groq = new Groq({ apiKey, timeout: 20000 })
-  const file = new File([audioBuffer.buffer as ArrayBuffer], 'audio.webm', { type: 'audio/webm' })
+  // Correctly slice the Buffer's backing ArrayBuffer — audioBuffer.buffer is the full
+  // Node.js memory pool; .slice() produces a new standalone ArrayBuffer with just our data.
+  const audioArrayBuffer = audioBuffer.buffer.slice(
+    audioBuffer.byteOffset,
+    audioBuffer.byteOffset + audioBuffer.byteLength
+  ) as ArrayBuffer
+  const file = new File([audioArrayBuffer], 'audio.webm', { type: 'audio/webm' })
   const result = await groq.audio.transcriptions.create({
     file,
     model: 'whisper-large-v3',
@@ -148,7 +154,8 @@ export default async function handler(req: Request, _ctx: Context) {
     }
 
     if (!text) {
-      return new Response(JSON.stringify({ error: 'All engines failed', code: 'ALL_FAILED' }), { status: 500, headers: corsHeaders })
+      console.error('[transcribe] ALL_FAILED. Last error:', lastError)
+      return new Response(JSON.stringify({ error: 'All engines failed', code: 'ALL_FAILED', detail: lastError }), { status: 500, headers: corsHeaders })
     }
 
     // Optional AI correction via DeepSeek
