@@ -33,5 +33,14 @@ test-results
 .env.local
 .env.*.local
 
+# Netlify CLI state (contains site tokens — never commit)
+.netlify/
+
+# Playwright cache
+.playwright/
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
+
 # Superpowers brainstorm session files
 .superpowers/

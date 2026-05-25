@@ -125,7 +125,10 @@ export default async function handler(req: Request, _ctx: Context) {
       return new Response(JSON.stringify({ error: 'No audio file provided', code: 'UNKNOWN' }), { status: 400, headers: corsHeaders })
     }
     const audioFile = audioEntry as File
-    const language  = (formData.get('language') as string) || 'hi'
+    // Validate language — must be a known BCP-47 code (2–10 chars, letters/digits/hyphen only)
+    const rawLang = (formData.get('language') as string) || 'hi'
+    const VALID_LANG = /^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$/
+    const language = VALID_LANG.test(rawLang) ? rawLang : 'hi'
     const correction = formData.get('correction') === 'true'
 
     // Mobile apps (React Native) send AAC (iOS) or M4A/OGG (Android).
