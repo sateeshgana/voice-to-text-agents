@@ -1,14 +1,13 @@
 // netlify/functions/transcribe.mts
 import type { Context } from '@netlify/functions'
 import Groq from 'groq-sdk'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
 // ── Pure helpers (exported for testing) ──────────────────────────────────────
 
-export type Engine = 'bhashini' | 'groq' | 'python'
+export type Engine = 'groq' | 'python'
 
 export function buildFallbackChain(): Engine[] {
-  return ['bhashini', 'groq', 'python']
+  return ['groq', 'python']
 }
 
 /**
@@ -16,12 +15,11 @@ export function buildFallbackChain(): Engine[] {
  * Exported for unit testing. The handler loop uses buildFallbackChain() directly.
  */
 export function selectEngine(failedEngine: string | null): Engine {
-  if (!failedEngine) return 'bhashini'
-  if (failedEngine === 'BHASHINI_FAIL') return 'groq'
+  if (!failedEngine) return 'groq'
   return 'python'
 }
 
-export async function applyGeminiCorrection(
+export async function applyAICorrection(
   text: string,
   language: string,
   enabled: boolean,
@@ -29,46 +27,35 @@ export async function applyGeminiCorrection(
 ): Promise<string> {
   if (!enabled || !apiKey) return text
   try {
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
-    const prompt = `Fix grammar, punctuation, and script rendering for the ${language} language. Return ONLY the corrected text, nothing else:\n\n${text}`
-    const result = await model.generateContent(prompt)
-    return result.response.text().trim() || text
+    // DeepSeek API is OpenAI-compatible
+    const res = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'user',
+            content: `Fix grammar, punctuation, and script rendering for the ${language} language. Return ONLY the corrected text, nothing else:\n\n${text}`,
+          },
+        ],
+        temperature: 0.1,
+        max_tokens: 1024,
+      }),
+      signal: AbortSignal.timeout(8000),
+    })
+    if (!res.ok) return text
+    const data = await res.json()
+    return data?.choices?.[0]?.message?.content?.trim() || text
   } catch {
     return text // silent fallback
   }
 }
 
 // ── API callers ───────────────────────────────────────────────────────────────
-
-async function callBhashini(audioBuffer: Buffer, language: string): Promise<string> {
-  const userId = process.env.BHASHINI_USER_ID
-  const apiKey = process.env.BHASHINI_API_KEY
-  if (!userId || !apiKey) throw new Error('BHASHINI_FAIL: missing credentials')
-
-  const base64Audio = audioBuffer.toString('base64')
-  const res = await fetch('https://dhruva-api.bhashini.gov.in/services/inference/pipeline', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: apiKey,
-      userID: userId,
-    },
-    body: JSON.stringify({
-      pipelineTasks: [{
-        taskType: 'asr',
-        config: { language: { sourceLanguage: language }, serviceId: '' },
-      }],
-      inputData: { audio: [{ audioContent: base64Audio }] },
-    }),
-    signal: AbortSignal.timeout(15000),
-  })
-  if (!res.ok) throw new Error('BHASHINI_FAIL: ' + res.status)
-  const data = await res.json()
-  const text = data?.pipelineResponse?.[0]?.output?.[0]?.source
-  if (!text) throw new Error('BHASHINI_FAIL: empty response')
-  return text
-}
 
 async function callGroq(audioBuffer: Buffer, language: string): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY
@@ -125,7 +112,8 @@ export default async function handler(req: Request, _ctx: Context) {
       return new Response(JSON.stringify({ error: 'No audio file provided', code: 'UNKNOWN' }), { status: 400, headers: corsHeaders })
     }
     const audioFile = audioEntry as File
-    // Validate language — must be a known BCP-47 code (2–10 chars, letters/digits/hyphen only)
+
+    // Validate language — must be a BCP-47 code (letters only, optional region)
     const rawLang = (formData.get('language') as string) || 'hi'
     const VALID_LANG = /^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$/
     const language = VALID_LANG.test(rawLang) ? rawLang : 'hi'
@@ -143,14 +131,13 @@ export default async function handler(req: Request, _ctx: Context) {
     const startTime = Date.now()
 
     let text = ''
-    let engine: Engine = 'bhashini'
+    let engine: Engine = 'groq'
     let lastError = ''
 
-    // Fallback chain
+    // Fallback chain: Groq Whisper → Python SpeechRecognition
     for (const eng of buildFallbackChain()) {
       try {
-        if (eng === 'bhashini') text = await callBhashini(audioBuffer, language)
-        else if (eng === 'groq') text = await callGroq(audioBuffer, language)
+        if (eng === 'groq') text = await callGroq(audioBuffer, language)
         else text = await callPython(audioBuffer, language)
         engine = eng
         break
@@ -164,8 +151,8 @@ export default async function handler(req: Request, _ctx: Context) {
       return new Response(JSON.stringify({ error: 'All engines failed', code: 'ALL_FAILED' }), { status: 500, headers: corsHeaders })
     }
 
-    // Optional Gemini correction
-    const correctedText = await applyGeminiCorrection(text, language, correction, process.env.GEMINI_API_KEY ?? '')
+    // Optional AI correction via DeepSeek
+    const correctedText = await applyAICorrection(text, language, correction, process.env.DEEPSEEK_API_KEY ?? '')
     const corrected = correctedText !== text
 
     const response = {

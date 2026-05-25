@@ -57,7 +57,7 @@ export default function App() {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-300 mt-8">
-          Powered by Groq · Gemini · Hosted free on Netlify
+          Powered by Groq · DeepSeek · Hosted free on Netlify
         </p>
       </main>
     </div>

@@ -1,10 +1,9 @@
 import { useAppStore } from '../store/appStore'
 
-const ENGINE_LABELS = {
-  bhashini: { label: 'via Bhashini', color: 'bg-green-100 text-green-700' },
-  groq:     { label: 'via Groq',     color: 'bg-yellow-100 text-yellow-700' },
-  python:   { label: 'via Python',   color: 'bg-red-100 text-red-700' },
-} as const
+const ENGINE_LABELS: Record<string, { label: string; color: string }> = {
+  groq:   { label: 'via Groq',   color: 'bg-yellow-100 text-yellow-700' },
+  python: { label: 'via Python', color: 'bg-red-100 text-red-700' },
+}
 
 export function TextPreview() {
   const { transcript, setTranscript, correctionEnabled, toggleCorrection, history, error } = useAppStore()
@@ -46,7 +45,7 @@ export function TextPreview() {
       <div className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-xl px-4 py-3">
         <div>
           <p className="text-sm font-semibold text-purple-700">✨ AI Correction</p>
-          <p className="text-xs text-gray-400">Gemini grammar & script fix</p>
+          <p className="text-xs text-gray-400">DeepSeek grammar & script fix</p>
         </div>
         <button
           onClick={toggleCorrection}

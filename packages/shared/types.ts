@@ -10,14 +10,14 @@ export type LanguageCode = 'hi' | 'bn' | 'te' | 'mr' | 'ta' | 'ur' | 'gu' | 'kn'
 
 export interface TranscribeRequest {
   language: LanguageCode // BCP-47 code
-  correction: boolean    // run Gemini correction pass
+  correction: boolean    // run AI correction pass
   userId?: string        // Netlify Identity JWT (optional)
 }
 
 export interface TranscribeResponse {
   text: string
   language: LanguageCode
-  engine: 'bhashini' | 'groq' | 'python'
+  engine: 'groq' | 'python'
   corrected: boolean
   duration: number    // seconds
   timestamp: string   // ISO-8601
@@ -32,7 +32,7 @@ export interface HistoryItem {
   id: string
   text: string
   language: LanguageCode
-  engine: 'bhashini' | 'groq' | 'python'
+  engine: 'groq' | 'python'
   corrected: boolean
   duration: number
   timestamp: string

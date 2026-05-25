@@ -35,7 +35,7 @@ describe('addToHistory', () => {
   it('prepends new item to history', () => {
     const { addToHistory } = useAppStore.getState()
     const item: HistoryItem = {
-      id: '1', text: 'hello', language: 'en-IN', engine: 'bhashini',
+      id: '1', text: 'hello', language: 'en-IN', engine: 'groq',
       corrected: false, duration: 3, timestamp: new Date().toISOString()
     }
     addToHistory(item)
