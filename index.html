@@ -2,13 +2,77 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VoiceIndia — बोलो, लिखो</title>
+
+    <!-- ── Primary SEO ─────────────────────────────────────────────────────── -->
+    <title>VoiceIndia — Free Voice to Text for All 22 Indian Languages</title>
+    <meta name="description" content="Free voice-to-text app supporting all 22 scheduled Indian languages including Hindi, Bengali, Telugu, Tamil, Marathi, Urdu and more. Powered by Groq Whisper AI. No sign-up needed." />
+    <meta name="keywords" content="voice to text India, speech to text Hindi, Indian language transcription, voice recognition Telugu, Tamil speech recognition, Hindi voice typing, Bengali voice to text, Marathi speech to text, free transcription India, Groq Whisper Indian languages" />
+    <meta name="author" content="Sateesh Ganaparapu" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://voice-to-text-ai.netlify.app/" />
+
+    <!-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ─────────────────────── -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content="https://voice-to-text-ai.netlify.app/" />
+    <meta property="og:title"       content="VoiceIndia — Free Voice to Text for All 22 Indian Languages" />
+    <meta property="og:description" content="Record your voice and get instant transcriptions in Hindi, Bengali, Telugu, Tamil, Marathi, Urdu and 17 more Indian languages. Free, no sign-up, works on mobile." />
+    <meta property="og:image"       content="https://voice-to-text-ai.netlify.app/icons/og-image.png" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt"   content="VoiceIndia — Voice to Text for Indian Languages" />
+    <meta property="og:locale"      content="en_IN" />
+    <meta property="og:site_name"   content="VoiceIndia" />
+
+    <!-- ── Twitter / X Card ────────────────────────────────────────────────── -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:url"         content="https://voice-to-text-ai.netlify.app/" />
+    <meta name="twitter:title"       content="VoiceIndia — Free Voice to Text for All 22 Indian Languages" />
+    <meta name="twitter:description" content="Record your voice and get instant transcriptions in Hindi, Bengali, Telugu, Tamil, Marathi, Urdu and 17 more Indian languages. Free, no sign-up, works on mobile." />
+    <meta name="twitter:image"       content="https://voice-to-text-ai.netlify.app/icons/og-image.png" />
+    <meta name="twitter:image:alt"   content="VoiceIndia — Voice to Text for Indian Languages" />
+
+    <!-- ── PWA / Mobile ────────────────────────────────────────────────────── -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon"                       href="/icons/icon-192.png" />
+    <meta name="theme-color"        content="#ff6b35" />
+    <meta name="mobile-web-app-capable"      content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title"  content="VoiceIndia" />
+
+    <!-- ── Structured Data (JSON-LD) ────────────────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "VoiceIndia",
+      "url": "https://voice-to-text-ai.netlify.app/",
+      "description": "Free voice-to-text web app supporting all 22 scheduled Indian languages plus Indian-accent English. Powered by Groq Whisper AI.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Sateesh Ganaparapu"
+      },
+      "inLanguage": [
+        "hi","bn","te","mr","ta","ur","gu","kn","ml","or",
+        "pa","as","mai","sa","sat","ks","ne","sd","kok","doi","mni","brx","en"
+      ]
+    }
+    </script>
+
     <!-- Netlify Identity disabled — re-enable by uncommenting when auth is needed -->
     <!-- <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script> -->
+
     <!-- Google reCAPTCHA v3 (invisible, score-based bot protection) -->
     <script src="https://www.google.com/recaptcha/api.js?render=%VITE_RECAPTCHA_KEY%"></script>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-803DC06SK3"></script>
     <script>
