@@ -6,11 +6,12 @@ import { ExportPanel }      from './components/ExportPanel'
 import { HistoryDrawer }    from './components/HistoryDrawer'
 import { SupportForm }      from './components/SupportForm'
 import { useAppStore }      from './store/appStore'
-import { useAuth }          from './hooks/useAuth'
+// Auth is disabled for now — re-enable by uncommenting useAuth below
+// import { useAuth }       from './hooks/useAuth'
 
 export default function App() {
   const { history, language } = useAppStore()
-  const { user, login, logout } = useAuth()
+  // const { user, login, logout } = useAuth()
   const [supportOpen, setSupportOpen] = useState(false)
 
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <div className="flex items-center gap-3">
             <LanguageSelector />
             {history.length > 0 && <HistoryDrawer />}
+            {/* Sign In / Sign Out — disabled; uncomment when auth is re-enabled
             {user ? (
               <button onClick={logout} className="text-white/80 hover:text-white text-xs font-medium">
                 Sign Out
@@ -38,6 +40,7 @@ export default function App() {
                 Sign In
               </button>
             )}
+            */}
           </div>
         </div>
       </header>
