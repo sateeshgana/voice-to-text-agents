@@ -58,4 +58,36 @@ describe('toggleCorrection', () => {
     toggleCorrection()
     expect(useAppStore.getState().correctionEnabled).toBe(true)
   })
+
+  it('can toggle back to false', () => {
+    const { toggleCorrection } = useAppStore.getState()
+    toggleCorrection()
+    expect(useAppStore.getState().correctionEnabled).toBe(true)
+    toggleCorrection()
+    expect(useAppStore.getState().correctionEnabled).toBe(false)
+  })
+})
+
+describe('clearHistory', () => {
+  it('empties the history array', () => {
+    const { addToHistory, clearHistory } = useAppStore.getState()
+    addToHistory({ id: '1', text: 'test', language: 'hi', engine: 'groq', corrected: false, duration: 1, timestamp: '' })
+    clearHistory()
+    expect(useAppStore.getState().history.length).toBe(0)
+  })
+})
+
+describe('setError', () => {
+  it('sets an error message', () => {
+    const { setError } = useAppStore.getState()
+    setError('Connection failed')
+    expect(useAppStore.getState().error).toBe('Connection failed')
+  })
+
+  it('clears the error when null is passed', () => {
+    const { setError } = useAppStore.getState()
+    setError('some error')
+    setError(null)
+    expect(useAppStore.getState().error).toBeNull()
+  })
 })
