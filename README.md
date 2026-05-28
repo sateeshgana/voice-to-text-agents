@@ -49,7 +49,7 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-username/voice-to-text-agents.git
+git clone https://github.com/sateeshgana/voice-to-text-agents.git
 cd voice-to-text-agents
 
 # 2. Install dependencies
